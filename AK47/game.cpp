@@ -1,6 +1,5 @@
 #include "game.h"
 #include "shader.h"
-#include "ak47.h"
 
 Game::Game(int width, int height, std::string title)
 {
@@ -8,19 +7,10 @@ Game::Game(int width, int height, std::string title)
     m_height = height;
     m_title = title;
     m_program_id = glInit();
-    m_camera = new Camera((float)width, (float)height, m_program_id);
-    m_drawables = std::vector<Drawable*>{
-        new AK47(m_program_id)
-    };
 }
 
 Game::~Game()
 {
-    for (auto drawables : m_drawables)
-    {
-        delete drawables;
-    }
-    delete m_camera;
     glDeleteProgram(m_program_id);
     glDeleteProgram(m_text_program_id);
     glfwTerminate();
@@ -30,18 +20,14 @@ void Game::Run()
 {
     glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GL_TRUE);
 
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDisable(GL_CULL_FACE);
-    glDepthFunc(GL_LESS);
+    Camera camera((float)m_width, (float) m_height, m_program_id);
 
     while (glfwGetKey(m_window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(m_window) == 0)
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         FpsCounter();
-        Draw3D();
+        Render(camera);
 
         glfwSwapBuffers(m_window);
         glfwPollEvents();
@@ -77,6 +63,12 @@ GLuint Game::glInit()
         throw false;
     }
 
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_CULL_FACE);
+    glDepthFunc(GL_LESS);
+
     fprintf(stdout, "%s initialized\n", m_title.c_str());
     return LoadShaders("vertex.glsl", "fragment.glsl");
 }
@@ -99,12 +91,8 @@ void Game::FpsCounter() const
     }
 }
 
-void Game::Draw3D() const
+void Game::Render(Camera& camera)
 {
     glUseProgram(m_program_id);
-    m_camera->Move(m_window);
-    for (auto drawables : m_drawables)
-    {
-        drawables->Draw();
-    }
+    camera.Move(m_window);
 }
