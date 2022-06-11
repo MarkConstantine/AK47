@@ -16,7 +16,10 @@ uniform float lightPower;
 void main()
 {
     // Material properties
-    vec3 diffuseColor = texture(textureSampler, uv).rgb;
+    
+    // TODO: Textures
+    //vec3 diffuseColor = texture(textureSampler, uv).rgb;
+    vec3 diffuseColor = vec3(0.7, 0.7, 0.7);
     vec3 ambientColor = vec3(0.3, 0.3, 0.3) * diffuseColor;
     vec3 specularColor = vec3(0.3, 0.3, 0.3);
 

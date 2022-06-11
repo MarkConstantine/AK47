@@ -2,6 +2,6 @@
 
 int main()
 {
-	Game game(1024, 768, "OpenGL - Mark Constantine");
+	Game game(1024, 768, "AK47 - Mark Constantine");
 	game.Run();
 }

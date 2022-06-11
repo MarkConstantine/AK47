@@ -10,24 +10,11 @@ public:
 private:
     void GetMvp(const glm::vec3& direction, const glm::vec3& right);
 private:
-    float m_width;
-    float m_height;
-    float m_horizontal_angle;
-    float m_vertical_angle;
-    float m_fov;
-    float m_default_move_speed, m_fast_move_speed, m_mouse_speed;
-    glm::vec3 m_position;
-    glm::mat4 m_model_matrix;
-    glm::mat4 m_view_matrix;
-    glm::mat4 m_projection_matrix;
-    glm::vec3 m_light_position;
-    glm::vec3 m_light_color;
-    float m_light_power;
-    GLuint m_mvp_id;
-    GLuint m_model_id;
-    GLuint m_view_id;
-    GLuint m_projection_id;
-    GLuint m_light_id;
-    GLuint m_light_color_id;
-    GLuint m_light_power_id;
+    float m_WindowWidth, m_WindowHeight, m_FOV;
+    float m_HorizontalAngle, m_VerticalAngle, m_DefaultMoveSpeed, m_FastMoveSpeed, m_MouseSpeed;
+    float m_LightPower;
+    glm::mat4 m_ModelMatrix, m_ViewMatrix, m_ProjectionMatrix;
+    glm::vec3 m_Position, m_LightPosition, m_LightColor;
+    GLuint m_ModelUniform, m_ViewUniform, m_ProjectionUniform;
+    GLuint m_LightPositionUniform, m_LightColorUniform, m_LightPowerUniform;
 };
