@@ -143,6 +143,7 @@ XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Packages\assimp-5.2.4\include;$(SolutionDir)Packages\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Packages\glew-2.1.0\include;$(SolutionDir)Packages\glm-0.9.9.8\glm</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -166,6 +167,7 @@ XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Packages\assimp-5.2.4\include;$(SolutionDir)Packages\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Packages\glew-2.1.0\include;$(SolutionDir)Packages\glm-0.9.9.8\glm</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -185,9 +187,14 @@ XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="renderer.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="game.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.glsl" />
@@ -197,8 +204,10 @@ XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="mesh.h" />
+    <ClInclude Include="renderer.h" />
     <ClInclude Include="shader.h" />
-    <ClInclude Include="game.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

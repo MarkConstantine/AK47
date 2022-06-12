@@ -1,8 +1,4 @@
-#define _USE_MATH_DEFINES
-#include <cmath>
-#include <gl/glew.h>
-#include <GLFW/glfw3.h>
-
+#include "stdafx.h"
 #include "camera.h"
 
 Camera::Camera(float width, float height, GLuint program_id)

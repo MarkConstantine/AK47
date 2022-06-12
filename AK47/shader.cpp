@@ -1,11 +1,4 @@
-#include <fstream>
-#include <memory>
-#include <sstream>
-#include <string>
-#include <vector>
-
-#include <GL/glew.h>
-
+#include "stdafx.h"
 #include "shader.h"
 
 Shader::Shader(const std::string& file_path, GLint shader_type)

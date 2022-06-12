@@ -1,12 +1,4 @@
-#include <string>
-#include <vector>
-
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#include <gl/glew.h>
-#include <glm/glm.hpp>
-
+#include "stdafx.h"
 #include "mesh.h"
 
 #define VECTOR_SIZE(v) (sizeof(v[0]) * v.size())

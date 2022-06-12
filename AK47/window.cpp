@@ -1,47 +1,39 @@
-#include "game.h"
-#include "shader.h"
-#include "mesh.h"
+#include "stdafx.h"
+#include "window.h"
+#include "renderer.h"
+#include "camera.h"
 
-Game::Game(int width, int height, const std::string& title) 
+Window::Window(int width, int height, const std::string& title)
 {
     m_WindowWidth = width;
     m_WindowHeight = height;
     m_WindowTitle = title;
-    glInit();
 }
 
-Game::~Game()
+Window::~Window()
 {
     glfwTerminate();
 }
 
-void Game::Run()
+void Window::Run()
 {
-    glfwSetInputMode(m_Window, GLFW_STICKY_KEYS, GL_TRUE);
-
-    ShaderProgram shaderProgram("vertex.glsl", "fragment.glsl");
-    Camera camera((float)m_WindowWidth, (float)m_WindowHeight, shaderProgram.GetProgramId());
-    Mesh ak47("ak47.obj");
+    Init();
+    Renderer renderer(m_WindowWidth, m_WindowHeight);
+    Camera camera((float)m_WindowWidth, (float)m_WindowHeight, renderer.GetProgramId());
 
     while (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(m_Window) == 0)
     {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        UpdateFpsCounter();
 
-        FpsCounter();
-
-        // Render 
-        // ------
-        glUseProgram(shaderProgram.GetProgramId());
         camera.Move(m_Window);
-        ak47.Render();
-        // ------
+        renderer.Render();
 
         glfwSwapBuffers(m_Window);
         glfwPollEvents();
     }
 }
 
-GLuint Game::glInit()
+void Window::Init()
 {
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -71,14 +63,12 @@ GLuint Game::glInit()
         exit(EXIT_FAILURE);
     }
 
-    glEnable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
-    glDepthFunc(GL_LESS);
-
+    glfwSetInputMode(m_Window, GLFW_STICKY_KEYS, GL_TRUE);
+    
     fprintf(stdout, "%s initialized\n", m_WindowTitle.c_str());
 }
 
-void Game::FpsCounter() const
+void Window::UpdateFpsCounter() const
 {
     static auto previous_time = glfwGetTime();
     static auto frames = 0;
