@@ -154,7 +154,6 @@ XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
       <Command>XCOPY /Y /D "$(SolutionDir)Packages\glew-2.1.0\bin\Release\x64\*.dll" $(OutDir)
 XCOPY /Y /D "$(SolutionDir)Packages\assimp-5.2.4\lib\Debug\*.dll" $(OutDir)
 XCOPY /Y /D "$(ProjectDir)*.glsl" $(OutDir)
-XCOPY /Y /D "$(ProjectDir)*.dds" $(OutDir)
 XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -180,7 +179,6 @@ XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
       <Command>XCOPY /Y /D "$(SolutionDir)Packages\glew-2.1.0\bin\Release\x64\*.dll" $(OutDir)
 XCOPY /Y /D "$(SolutionDir)Packages\assimp-5.2.4\lib\Release\*.dll" $(OutDir)
 XCOPY /Y /D "$(ProjectDir)*.glsl" $(OutDir)
-XCOPY /Y /D "$(ProjectDir)*.dds" $(OutDir)
 XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

@@ -7,6 +7,7 @@
 #include <glfw/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "shader.h"
 #include "camera.h"
 
 class Game {
@@ -21,5 +22,4 @@ private:
     int m_WindowWidth, m_WindowHeight;
     std::string m_WindowTitle;
     GLFWwindow* m_Window;
-    GLuint m_ProgramId;
 };

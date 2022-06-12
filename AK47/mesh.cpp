@@ -134,7 +134,7 @@ void Mesh::InitSingleMesh(const aiMesh* pAiMesh, const MeshEntry& meshInfo)
 {
     // Populate the vertex attribute vectors
     assert(pAiMesh->mNumVertices > 0);
-    for (int i = 0; i < pAiMesh->mNumVertices; ++i)
+    for (uint i = 0; i < pAiMesh->mNumVertices; ++i)
     {
         const uint idx = meshInfo.BaseVertex + i;
         const aiVector3D& pos = pAiMesh->mVertices[i];
@@ -150,11 +150,11 @@ void Mesh::InitSingleMesh(const aiMesh* pAiMesh, const MeshEntry& meshInfo)
 
     // Populate the index buffer
     assert(pAiMesh->mNumFaces > 0);
-    for (int f = 0; f < pAiMesh->mNumFaces; f++)
+    for (uint f = 0; f < pAiMesh->mNumFaces; f++)
     {
         const aiFace& face = pAiMesh->mFaces[f];
         assert(face.mNumIndices > 0);
-        for (int i = 0; i < face.mNumIndices; ++i)
+        for (uint i = 0; i < face.mNumIndices; ++i)
         {
             const uint idx = meshInfo.BaseIndex + f * face.mNumIndices + i;
             m_Indices[idx] = face.mIndices[i];

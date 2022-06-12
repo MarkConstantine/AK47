@@ -2,17 +2,16 @@
 #include "shader.h"
 #include "mesh.h"
 
-Game::Game(int width, int height, const std::string& title)
+Game::Game(int width, int height, const std::string& title) 
 {
     m_WindowWidth = width;
     m_WindowHeight = height;
     m_WindowTitle = title;
-    m_ProgramId = glInit();
+    glInit();
 }
 
 Game::~Game()
 {
-    glDeleteProgram(m_ProgramId);
     glfwTerminate();
 }
 
@@ -20,7 +19,8 @@ void Game::Run()
 {
     glfwSetInputMode(m_Window, GLFW_STICKY_KEYS, GL_TRUE);
 
-    Camera camera((float)m_WindowWidth, (float)m_WindowHeight, m_ProgramId);
+    ShaderProgram shaderProgram("vertex.glsl", "fragment.glsl");
+    Camera camera((float)m_WindowWidth, (float)m_WindowHeight, shaderProgram.GetProgramId());
     Mesh ak47("ak47.obj");
 
     while (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(m_Window) == 0)
@@ -31,7 +31,7 @@ void Game::Run()
 
         // Render 
         // ------
-        glUseProgram(m_ProgramId);
+        glUseProgram(shaderProgram.GetProgramId());
         camera.Move(m_Window);
         ak47.Render();
         // ------
@@ -76,7 +76,6 @@ GLuint Game::glInit()
     glDepthFunc(GL_LESS);
 
     fprintf(stdout, "%s initialized\n", m_WindowTitle.c_str());
-    return LoadShaders("vertex.glsl", "fragment.glsl");
 }
 
 void Game::FpsCounter() const
