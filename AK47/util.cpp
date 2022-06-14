@@ -27,4 +27,9 @@ namespace util
     {
         return GetBaseDirectory();
     }
+
+    std::filesystem::path GetTextureDirectory()
+    {
+        return GetBaseDirectory();
+    }
 } // util

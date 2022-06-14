@@ -18,9 +18,9 @@ Camera::Camera(float width, float height, GLuint program_id)
         glm::vec3(0, 0, 0),
         glm::vec3(0, 1, 0)
     );
-    m_LightPosition = glm::vec3(1, 1, 5);
+    m_LightPosition = glm::vec3(0.5, 2, 0.5);
     m_LightColor = glm::vec3(1, 1, 1);
-    m_LightPower = 20.f;
+    m_LightPower = 10.f;
     m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV), width / height, 0.1f, 100.0f);
     m_ModelUniform = glGetUniformLocation(program_id, "model");
     m_ViewUniform = glGetUniformLocation(program_id, "view");

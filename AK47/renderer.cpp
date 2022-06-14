@@ -3,7 +3,7 @@
 
 Renderer::Renderer(int window_width, int window_height)
     : m_ShaderProgram("vertex.glsl", "fragment.glsl")
-    , m_AK47("ak47.obj")
+    , m_AK47("ak47.obj", "AK47_BaseColor.png")
 {
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);

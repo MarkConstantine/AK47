@@ -156,7 +156,8 @@ XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
       <Command>XCOPY /Y /D "$(SolutionDir)Packages\glew-2.1.0\bin\Release\x64\*.dll" $(OutDir)
 XCOPY /Y /D "$(SolutionDir)Packages\assimp-5.2.4\lib\Debug\*.dll" $(OutDir)
 XCOPY /Y /D "$(ProjectDir)Shaders\*.glsl" $(OutDir)
-XCOPY /Y /D "$(ProjectDir)Models\*.obj" $(OutDir)</Command>
+XCOPY /Y /D "$(ProjectDir)Models\*.obj" $(OutDir)
+XCOPY /Y /D "$(ProjectDir)Textures\*.png" $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -183,7 +184,8 @@ XCOPY /Y /D "$(ProjectDir)Models\*.obj" $(OutDir)</Command>
       <Command>XCOPY /Y /D "$(SolutionDir)Packages\glew-2.1.0\bin\Release\x64\*.dll" $(OutDir)
 XCOPY /Y /D "$(SolutionDir)Packages\assimp-5.2.4\lib\Release\*.dll" $(OutDir)
 XCOPY /Y /D "$(ProjectDir)Shaders\*.glsl" $(OutDir)
-XCOPY /Y /D "$(ProjectDir)Models\*.obj" $(OutDir)</Command>
+XCOPY /Y /D "$(ProjectDir)Models\*.obj" $(OutDir)
+XCOPY /Y /D "$(ProjectDir)Textures\*.png" $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -209,9 +211,17 @@ XCOPY /Y /D "$(ProjectDir)Models\*.obj" $(OutDir)</Command>
     <ClInclude Include="mesh.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="shader.h" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="util.h" />
     <ClInclude Include="window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Textures\AK47_BaseColor.png" />
+    <Image Include="Textures\AK47_Emissive.png" />
+    <Image Include="Textures\AK47_Metallic.png" />
+    <Image Include="Textures\AK47_Normal.png" />
+    <Image Include="Textures\AK47_Roughness.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

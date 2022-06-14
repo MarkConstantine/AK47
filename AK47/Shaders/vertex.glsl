@@ -2,10 +2,10 @@
 
 // Input vertex data, different for all executions of this shader.
 layout(location = 0) in vec3 vertexPosition_modelspace;
-layout(location = 1) in vec2 vertexUV;
+layout(location = 1) in vec2 vertexTexCoord_modelspace;
 layout(location = 2) in vec3 vertexNormal_modelspace;
 
-out vec2 uv;
+out vec2 texCoord_modelspace;
 out vec3 position_worldspace;
 out vec3 eyeDirection_cameraspace;
 out vec3 lightDirection_cameraspace;
@@ -36,5 +36,5 @@ void main()
 
     normal_cameraspace = (view * model * vec4(vertexNormal_modelspace, 0)).xyz; // Only correct if ModelMatrix does not scale the model! Use its inverse transpose if not.
 
-    uv = vertexUV;
+    texCoord_modelspace = vertexTexCoord_modelspace;
 }

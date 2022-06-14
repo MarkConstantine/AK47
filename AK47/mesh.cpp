@@ -2,6 +2,9 @@
 #include "mesh.h"
 #include "util.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #define VECTOR_SIZE(v) (sizeof(v[0]) * v.size())
 
 glm::mat4 Convert(aiMatrix4x4 matrix)
@@ -14,35 +17,15 @@ glm::mat4 Convert(aiMatrix4x4 matrix)
     return m;
 }
 
-Mesh::Mesh(const std::string& filename)
+Mesh::Mesh(const std::string& model_filename, const std::string& texture_filename)
 {
     Clear();
 
     glGenVertexArrays(1, &m_VAO);
     glBindVertexArray(m_VAO);
 
-    glGenBuffers(NUM_BUFFERS, m_Buffers);
-    assert(m_Buffers[INDEX_BUFFER] > 0);
-    assert(m_Buffers[POSITION_VBO] > 0);
-    assert(m_Buffers[TEXCOORD_VBO] > 0);
-    assert(m_Buffers[NORMAL_VBO] > 0);
-
-    const auto ASSIMP_LOAD_FLAGS = (
-        aiProcess_Triangulate
-        | aiProcess_GenSmoothNormals
-        | aiProcess_FlipUVs
-        | aiProcess_JoinIdenticalVertices
-    );
-
-    std::string absolute_path = util::GetModelDirectory().append(filename).string();
-    m_pScene = m_Importer.ReadFile(absolute_path, ASSIMP_LOAD_FLAGS);
-    if (m_pScene == nullptr)
-    {
-        fprintf(stdout, "Error loading %s: %s\n", absolute_path.c_str(), m_Importer.GetErrorString());
-        exit(EXIT_FAILURE);
-    }
-
-    auto result = InitFromScene(m_pScene);
+    LoadModel(model_filename);
+    LoadTexture(texture_filename);
 
     glBindVertexArray(0);
 }
@@ -55,6 +38,7 @@ Mesh::~Mesh()
 void Mesh::Render()
 {
     glBindVertexArray(m_VAO);
+    glBindTexture(GL_TEXTURE_2D, m_Texture);
 
     for (int i = 0; i < m_Meshes.size(); ++i)
     {
@@ -84,12 +68,51 @@ void Mesh::Clear()
     }
 }
 
-bool Mesh::InitFromScene(const aiScene* pScene)
+void Mesh::LoadTexture(const std::string& texture_filename)
 {
+    glGenTextures(1, &m_Texture);
+    glBindTexture(GL_TEXTURE_2D, m_Texture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int width, height, numChannels;
+    std::string absolute_path = util::GetTextureDirectory().append(texture_filename).string();
+    auto data = stbi_load(absolute_path.c_str(), &width, &height, &numChannels, 0);
+    if (data == nullptr)
+    {
+        fprintf(stderr, "Failed to load texture: %s", absolute_path.c_str());
+        exit(EXIT_FAILURE);
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    stbi_image_free(data);
+}
+
+void Mesh::LoadModel(const std::string& model_filename)
+{
+    const auto ASSIMP_LOAD_FLAGS = (
+        aiProcess_Triangulate
+        | aiProcess_GenSmoothNormals
+        | aiProcess_FlipUVs
+        | aiProcess_JoinIdenticalVertices
+        );
+
+    std::string absolute_path = util::GetModelDirectory().append(model_filename).string();
+    const aiScene* pScene = m_Importer.ReadFile(absolute_path, ASSIMP_LOAD_FLAGS);
+    if (pScene == nullptr)
+    {
+        fprintf(stdout, "Error loading %s: %s\n", absolute_path.c_str(), m_Importer.GetErrorString());
+        exit(EXIT_FAILURE);
+    }
+    
     ReserveSpace(pScene);
     InitAllMeshes(pScene);
     PopulateBuffers();
-    return true;
 }
 
 void Mesh::ReserveSpace(const aiScene* pScene)
@@ -162,6 +185,12 @@ void Mesh::PopulateBuffers()
     const auto POSITION_LOCATION = 0;
     const auto TEXCOORD_LOCATION = 1;
     const auto NORMAL_LOCATION = 2;
+
+    glGenBuffers(NUM_BUFFERS, m_Buffers);
+    assert(m_Buffers[INDEX_BUFFER] > 0);
+    assert(m_Buffers[POSITION_VBO] > 0);
+    assert(m_Buffers[TEXCOORD_VBO] > 0);
+    assert(m_Buffers[NORMAL_VBO] > 0);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_Buffers[POSITION_VBO]);
     glBufferData(GL_ARRAY_BUFFER, VECTOR_SIZE(m_Positions), m_Positions.data(), DRAW_TYPE);

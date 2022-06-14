@@ -6,7 +6,7 @@ using uint = unsigned int;
 class Mesh
 {
 public:
-    Mesh(const std::string& filename);
+    Mesh(const std::string& model_filename, const std::string& texture_filename);
     ~Mesh();
     void Render();
 private:
@@ -26,7 +26,8 @@ private:
     };
 
     void Clear();
-    bool InitFromScene(const aiScene* pScene);
+    void LoadTexture(const std::string& texture_filename);
+    void LoadModel(const std::string& model_filename);
     void ReserveSpace(const aiScene* pScene);
     void InitAllMeshes(const aiScene* pScene);
     void InitSingleMesh(const aiMesh* pAiMesh, const MeshEntry& meshInfo);
@@ -42,11 +43,11 @@ private:
 
     GLuint m_VAO = 0;
     GLuint m_Buffers[NUM_BUFFERS] = { 0 };
+    GLuint m_Texture = 0;
     std::vector<MeshEntry> m_Meshes;
     std::vector<glm::vec3> m_Positions;
     std::vector<glm::vec3> m_Normals;
     std::vector<glm::vec2> m_TexCoords;
     std::vector<uint> m_Indices;
     Assimp::Importer m_Importer;
-    const aiScene* m_pScene;
 };
