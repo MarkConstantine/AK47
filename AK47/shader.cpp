@@ -1,15 +1,17 @@
 #include "stdafx.h"
 #include "shader.h"
+#include "util.h"
 
-Shader::Shader(const std::string& file_path, GLint shader_type)
+Shader::Shader(const std::string& filename, GLint shader_type)
 {
     m_ShaderType = shader_type;
     m_ShaderId = glCreateShader(m_ShaderType);
-
-    std::ifstream shader_stream(file_path, std::ios::in);
+    
+    std::string absolute_path = util::GetShaderDirectory().append(filename).string();
+    std::ifstream shader_stream(absolute_path, std::ios::in);
     if (!shader_stream.is_open())
     {
-        fprintf(stderr, "Failed to open %s\n", file_path.c_str());
+        fprintf(stderr, "Failed to open %s\n", absolute_path.c_str());
         exit(EXIT_FAILURE);
     }
 
@@ -21,7 +23,7 @@ Shader::Shader(const std::string& file_path, GLint shader_type)
     const char* shader_code_ptr = shader_code.c_str();
     glShaderSource(m_ShaderId, 1, &shader_code_ptr, NULL);
     glCompileShader(m_ShaderId);
-    fprintf(stdout, "Compiled Shader: %s\n", file_path.c_str());
+    fprintf(stdout, "Compiled Shader: %s\n", absolute_path.c_str());
 
     GLint compile_status = GL_FALSE;
     GLint log_length = 0;
@@ -52,9 +54,9 @@ GLint Shader::GetShaderType() const
     return m_ShaderType;
 }
 
-ShaderProgram::ShaderProgram(const std::string& vertex_shader_file, const std::string& fragment_shader_file)
-    : m_VertexShader(Shader(vertex_shader_file, GL_VERTEX_SHADER))
-    , m_FragmentShader(Shader(fragment_shader_file, GL_FRAGMENT_SHADER))
+ShaderProgram::ShaderProgram(const std::string& vertex_shader_filename, const std::string& fragment_shader_filename)
+    : m_VertexShader(Shader(vertex_shader_filename, GL_VERTEX_SHADER))
+    , m_FragmentShader(Shader(fragment_shader_filename, GL_FRAGMENT_SHADER))
 {
     m_ProgramId = glCreateProgram();
     glAttachShader(m_ProgramId, m_VertexShader.GetShaderId());

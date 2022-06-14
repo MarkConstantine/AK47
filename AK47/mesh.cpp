@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "mesh.h"
+#include "util.h"
 
 #define VECTOR_SIZE(v) (sizeof(v[0]) * v.size())
 
@@ -33,14 +34,15 @@ Mesh::Mesh(const std::string& filename)
         | aiProcess_JoinIdenticalVertices
     );
 
-    m_pScene = m_Importer.ReadFile(filename, ASSIMP_LOAD_FLAGS);
+    std::string absolute_path = util::GetModelDirectory().append(filename).string();
+    m_pScene = m_Importer.ReadFile(absolute_path, ASSIMP_LOAD_FLAGS);
     if (m_pScene == nullptr)
     {
-        fprintf(stdout, "Error loading %s: %s\n", filename.c_str(), m_Importer.GetErrorString());
+        fprintf(stdout, "Error loading %s: %s\n", absolute_path.c_str(), m_Importer.GetErrorString());
         exit(EXIT_FAILURE);
     }
 
-    auto result = InitFromScene(m_pScene, filename);
+    auto result = InitFromScene(m_pScene);
 
     glBindVertexArray(0);
 }
@@ -82,7 +84,7 @@ void Mesh::Clear()
     }
 }
 
-bool Mesh::InitFromScene(const aiScene* pScene, const std::string& filename)
+bool Mesh::InitFromScene(const aiScene* pScene)
 {
     ReserveSpace(pScene);
     InitAllMeshes(pScene);

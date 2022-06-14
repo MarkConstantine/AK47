@@ -26,7 +26,7 @@ private:
     };
 
     void Clear();
-    bool InitFromScene(const aiScene* pScene, const std::string& Filename);
+    bool InitFromScene(const aiScene* pScene);
     void ReserveSpace(const aiScene* pScene);
     void InitAllMeshes(const aiScene* pScene);
     void InitSingleMesh(const aiMesh* pAiMesh, const MeshEntry& meshInfo);

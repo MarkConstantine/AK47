@@ -42,15 +42,18 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="fragment.glsl">
+    <None Include="Shaders\fragment.glsl">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="vertex.glsl">
+    <None Include="Shaders\vertex.glsl">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="ak47.obj">
+    <None Include="Models\ak47.obj">
       <Filter>Resource Files\Models</Filter>
     </None>
   </ItemGroup>
@@ -71,6 +74,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

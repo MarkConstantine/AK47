@@ -144,6 +144,7 @@ XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Packages\assimp-5.2.4\include;$(SolutionDir)Packages\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Packages\glew-2.1.0\include;$(SolutionDir)Packages\glm-0.9.9.8\glm</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,8 +155,8 @@ XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
     <PostBuildEvent>
       <Command>XCOPY /Y /D "$(SolutionDir)Packages\glew-2.1.0\bin\Release\x64\*.dll" $(OutDir)
 XCOPY /Y /D "$(SolutionDir)Packages\assimp-5.2.4\lib\Debug\*.dll" $(OutDir)
-XCOPY /Y /D "$(ProjectDir)*.glsl" $(OutDir)
-XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
+XCOPY /Y /D "$(ProjectDir)Shaders\*.glsl" $(OutDir)
+XCOPY /Y /D "$(ProjectDir)Models\*.obj" $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -168,6 +169,7 @@ XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Packages\assimp-5.2.4\include;$(SolutionDir)Packages\glfw-3.3.4.bin.WIN64\include;$(SolutionDir)Packages\glew-2.1.0\include;$(SolutionDir)Packages\glm-0.9.9.8\glm</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -180,8 +182,8 @@ XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
     <PostBuildEvent>
       <Command>XCOPY /Y /D "$(SolutionDir)Packages\glew-2.1.0\bin\Release\x64\*.dll" $(OutDir)
 XCOPY /Y /D "$(SolutionDir)Packages\assimp-5.2.4\lib\Release\*.dll" $(OutDir)
-XCOPY /Y /D "$(ProjectDir)*.glsl" $(OutDir)
-XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
+XCOPY /Y /D "$(ProjectDir)Shaders\*.glsl" $(OutDir)
+XCOPY /Y /D "$(ProjectDir)Models\*.obj" $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -194,12 +196,13 @@ XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="util.cpp" />
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="fragment.glsl" />
-    <None Include="vertex.glsl" />
-    <None Include="ak47.obj" />
+    <None Include="Shaders\fragment.glsl" />
+    <None Include="Shaders\vertex.glsl" />
+    <None Include="Models\ak47.obj" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
@@ -207,6 +210,7 @@ XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
     <ClInclude Include="renderer.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="util.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
