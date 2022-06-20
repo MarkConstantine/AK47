@@ -3,10 +3,18 @@
 #define INVALID_MATERIAL 0xFFFFFFFF
 using uint = unsigned int;
 
+struct MeshInfo
+{
+    std::string ModelFile;
+    std::string DiffuseTextureFile;
+    std::string NormalMapFile;
+    std::string SpecularMapFile;
+};
+
 class Mesh
 {
 public:
-    Mesh(const std::string& model_filename, const std::string& texture_filename, const std::string& normal_map_filename);
+    Mesh(const MeshInfo& info);
     ~Mesh();
     void Render(GLuint program_id);
 private:
@@ -52,6 +60,7 @@ private:
     enum TEXTURE_TYPE {
         BASE_COLOR,
         NORMAL_MAP,
+        SPECULAR_MAP,
         NUM_TEXTURES
     };
 
@@ -67,11 +76,8 @@ private:
     GLuint m_Buffers[NUM_BUFFERS] = { 0 };
     TextureEntry m_Textures[NUM_TEXTURES] = { 0 };
     std::vector<MeshEntry> m_Meshes;
-    std::vector<glm::vec3> m_Positions;
-    std::vector<glm::vec3> m_Normals;
+    std::vector<glm::vec3> m_Positions, m_Normals, m_Tangents, m_Bitangents;
     std::vector<glm::vec2> m_TexCoords;
-    std::vector<glm::vec3> m_Tangents;
-    std::vector<glm::vec3> m_Bitangents;
     std::vector<uint> m_Indices;
     Assimp::Importer m_Importer;
 };

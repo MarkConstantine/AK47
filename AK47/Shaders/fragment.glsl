@@ -8,15 +8,16 @@ out vec4 fragColor;
 
 uniform sampler2D diffuseMap;
 uniform sampler2D normalMap;
+uniform sampler2D specularMap;
+
 uniform vec3 cameraPosition_worldspace;
 uniform vec3 lightPosition_worldspace;
-uniform vec3 lightColor;
-uniform float lightPower;
 
 void main()
 {
+    vec3 diffuse = texture(diffuseMap, texCoord_modelspace).rgb;
     vec3 normal = texture(normalMap, texCoord_modelspace).rgb * 2.0 - 1.0; // Map [0..1] to [-1,1]
-    vec3 color = texture(diffuseMap, texCoord_modelspace).rgb;
+    vec3 specular = vec3(1.0) * texture(specularMap, texCoord_modelspace).r; // Red channel only used. Use same amount for green and blue channel.
 
     vec3 lightDirection_worldspace = lightPosition_worldspace - position_worldspace;
     vec3 lightDirection_tangentspace = normalize(TBN * lightDirection_worldspace);
@@ -26,13 +27,13 @@ void main()
     vec3 halfwayDirection_tangentspace = normalize(lightDirection_tangentspace + viewDirection_tangentspace);
     
     // Ambient Color: Simulate indirect light
-    vec3 ambientColor = 0.1 * color;
+    vec3 ambientColor = 0.1 * diffuse;
 
     // Diffuse Color: Color of the object.
-    vec3 diffuseColor = color * max(dot(lightDirection_tangentspace, normal), 0);
+    vec3 diffuseColor = vec3(1.0, 1.0, 1.0) * diffuse * max(dot(lightDirection_tangentspace, normal), 0);
 
     // Specular Color: Reflective highlights.
-    vec3 specularColor = vec3(0.2) * pow(max(dot(normal, halfwayDirection_tangentspace), 0), 32);
+    vec3 specularColor = specular * vec3(0.2) * pow(max(dot(normal, halfwayDirection_tangentspace), 0), 32);
     
     fragColor = vec4(ambientColor + diffuseColor + specularColor, 1.0);
 }

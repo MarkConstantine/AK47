@@ -76,12 +76,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Textures\AK47_Emissive.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="Textures\AK47_Metallic.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
     <Image Include="Textures\AK47_Roughness.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
@@ -101,6 +95,9 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="Models\ak47.obj">
       <Filter>Resource Files\Models</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Textures\AK47_Metallic.png">
+      <Filter>Resource Files\Textures</Filter>
     </CopyFileToFolders>
   </ItemGroup>
 </Project>

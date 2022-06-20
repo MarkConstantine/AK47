@@ -7,19 +7,17 @@
 
 #define VECTOR_SIZE(v) (sizeof(v[0]) * v.size())
 
-Mesh::Mesh(
-    const std::string& model_filename,
-    const std::string& texture_filename,
-    const std::string& normal_map_filename)
+Mesh::Mesh(const MeshInfo& info)
 {
     Clear();
 
     glGenVertexArrays(1, &m_VAO);
     glBindVertexArray(m_VAO);
 
-    LoadModel(model_filename);
-    LoadTexture(m_Textures[BASE_COLOR], texture_filename, "diffuseMap");
-    LoadTexture(m_Textures[NORMAL_MAP], normal_map_filename, "normalMap");
+    LoadModel(info.ModelFile);
+    LoadTexture(m_Textures[BASE_COLOR], info.DiffuseTextureFile, "diffuseMap");
+    LoadTexture(m_Textures[NORMAL_MAP], info.NormalMapFile, "normalMap");
+    LoadTexture(m_Textures[SPECULAR_MAP], info.SpecularMapFile, "specularMap");
 
     glBindVertexArray(0);
 }
@@ -95,7 +93,16 @@ void Mesh::LoadTexture(TextureEntry& texture, const std::string& texture_filenam
         exit(EXIT_FAILURE);
     }
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    GLenum format = GL_RGB;
+    switch (numChannels)
+    {
+        case 1: format = GL_RED;    break;
+        case 2: format = GL_RG;     break;
+        case 3: format = GL_RGB;    break;
+        case 4: format = GL_RGBA;   break;
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(data);
@@ -109,7 +116,7 @@ void Mesh::LoadModel(const std::string& model_filename)
         | aiProcess_FlipUVs
         | aiProcess_JoinIdenticalVertices
         | aiProcess_CalcTangentSpace
-    );
+        );
 
     std::string absolute_path = util::GetModelDirectory().append(model_filename).string();
     const aiScene* pScene = m_Importer.ReadFile(absolute_path, ASSIMP_LOAD_FLAGS);
@@ -118,7 +125,7 @@ void Mesh::LoadModel(const std::string& model_filename)
         fprintf(stdout, "Error loading %s: %s\n", absolute_path.c_str(), m_Importer.GetErrorString());
         exit(EXIT_FAILURE);
     }
-    
+
     ReserveSpace(pScene);
     InitAllMeshes(pScene);
     PopulateBuffers();

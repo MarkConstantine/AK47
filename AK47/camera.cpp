@@ -19,16 +19,12 @@ Camera::Camera(float width, float height, GLuint program_id)
         glm::vec3(0, 1, 0)
     );
     m_LightPosition = m_Position;
-    m_LightColor = glm::vec3(1, 1, 1);
-    m_LightPower = 10.f;
     m_ProjectionMatrix = glm::perspective(glm::radians(m_FOV), width / height, 0.1f, 100.0f);
     m_ModelUniform = glGetUniformLocation(program_id, "model");
     m_ViewUniform = glGetUniformLocation(program_id, "view");
     m_ProjectionUniform = glGetUniformLocation(program_id, "projection");
     m_CameraPositionUniform = glGetUniformLocation(program_id, "cameraPosition_worldspace");
     m_LightPositionUniform = glGetUniformLocation(program_id, "lightPosition_worldspace");
-    m_LightColorUniform = glGetUniformLocation(program_id, "lightColor");
-    m_LightPowerUniform = glGetUniformLocation(program_id, "lightPower");
 }
 
 void Camera::Move(GLFWwindow* window)
@@ -108,6 +104,4 @@ void Camera::SetUniforms(const glm::vec3& direction, const glm::vec3& right)
     glUniform3f(m_CameraPositionUniform, m_Position.x, m_Position.y, m_Position.z);
     
     glUniform3f(m_LightPositionUniform, m_LightPosition.x, m_LightPosition.y, m_LightPosition.z);
-    glUniform3f(m_LightColorUniform, m_LightColor.x, m_LightColor.y, m_LightColor.z);
-    glUniform1f(m_LightPowerUniform, m_LightPower);
 }
