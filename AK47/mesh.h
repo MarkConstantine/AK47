@@ -6,9 +6,9 @@ using uint = unsigned int;
 class Mesh
 {
 public:
-    Mesh(const std::string& model_filename, const std::string& texture_filename);
+    Mesh(const std::string& model_filename, const std::string& texture_filename, const std::string& normal_map_filename);
     ~Mesh();
-    void Render();
+    void Render(GLuint program_id);
 private:
     struct MeshEntry {
         MeshEntry()
@@ -25,29 +25,53 @@ private:
         uint MaterialIndex;
     };
 
-    void Clear();
-    void LoadTexture(const std::string& texture_filename);
-    void LoadModel(const std::string& model_filename);
-    void ReserveSpace(const aiScene* pScene);
-    void InitAllMeshes(const aiScene* pScene);
-    void InitSingleMesh(const aiMesh* pAiMesh, const MeshEntry& meshInfo);
-    void PopulateBuffers();
+    struct TextureEntry {
+        GLuint TextureUnit;
+        std::string TextureSampler;
+    };
+
+    enum VBO_LOCATION {
+        POSITION_LOCATION,
+        TEXCOORD_LOCATION,
+        NORMAL_LOCATION,
+        TANGENT_LOCATION,
+        BITANGENT_LOCATION,
+        NUM_LOCATIONS
+    };
 
     enum BUFFER_TYPE {
         INDEX_BUFFER,
         POSITION_VBO,
         TEXCOORD_VBO,
         NORMAL_VBO,
+        TANGENT_VBO,
+        BITANGENT_VBO,
         NUM_BUFFERS
     };
 
+    enum TEXTURE_TYPE {
+        BASE_COLOR,
+        NORMAL_MAP,
+        NUM_TEXTURES
+    };
+
+    void Clear();
+    void LoadTexture(TextureEntry& texture, const std::string& texture_filename, const std::string& sampler_name);
+    void LoadModel(const std::string& model_filename);
+    void ReserveSpace(const aiScene* pScene);
+    void InitAllMeshes(const aiScene* pScene);
+    void InitSingleMesh(const aiMesh* pAiMesh, const MeshEntry& meshInfo);
+    void PopulateBuffers();
+
     GLuint m_VAO = 0;
     GLuint m_Buffers[NUM_BUFFERS] = { 0 };
-    GLuint m_Texture = 0;
+    TextureEntry m_Textures[NUM_TEXTURES] = { 0 };
     std::vector<MeshEntry> m_Meshes;
     std::vector<glm::vec3> m_Positions;
     std::vector<glm::vec3> m_Normals;
     std::vector<glm::vec2> m_TexCoords;
+    std::vector<glm::vec3> m_Tangents;
+    std::vector<glm::vec3> m_Bitangents;
     std::vector<uint> m_Indices;
     Assimp::Importer m_Importer;
 };

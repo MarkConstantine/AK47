@@ -1,40 +1,36 @@
 #version 330 core
 
-// Input vertex data, different for all executions of this shader.
 layout(location = 0) in vec3 vertexPosition_modelspace;
 layout(location = 1) in vec2 vertexTexCoord_modelspace;
 layout(location = 2) in vec3 vertexNormal_modelspace;
+layout(location = 3) in vec3 vertexTangent_modelspace;
+layout(location = 4) in vec3 vertexBitangent_modelspace;
 
 out vec2 texCoord_modelspace;
 out vec3 position_worldspace;
-out vec3 eyeDirection_cameraspace;
-out vec3 lightDirection_cameraspace;
-out vec3 normal_cameraspace;
+out mat3 TBN;
 
-// Values that stay constant for whole mesh
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-uniform vec3 lightPosition_worldspace;
 
 void main()
 {
-    mat4 mvp = projection * view * model;
-    
-    gl_Position = mvp * vec4(vertexPosition_modelspace, 1);
-
     // Position of vertex in worldspace.
     position_worldspace = (model * vec4(vertexPosition_modelspace, 1)).xyz;
 
-    // Vector from vertex to camera.
-    vec3 vertexPosition_cameraspace = (view * model * vec4(vertexPosition_modelspace, 1)).xyz;
-    eyeDirection_cameraspace = vec3(0, 0, 0) - vertexPosition_cameraspace;
-
-    // Vector from vertex to light. M is ommited because it's identity in cameraspace.
-    vec3 lightPosition_cameraspace = (view * vec4(lightPosition_worldspace, 1)).xyz;
-    lightDirection_cameraspace = lightPosition_cameraspace + eyeDirection_cameraspace;
-
-    normal_cameraspace = (view * model * vec4(vertexNormal_modelspace, 0)).xyz; // Only correct if ModelMatrix does not scale the model! Use its inverse transpose if not.
-
     texCoord_modelspace = vertexTexCoord_modelspace;
+
+    // Tangents and Bitangents in worldspace for normal mapping.
+    mat3 normalMatrix = transpose(inverse(mat3(model)));
+    vec3 T = normalize(normalMatrix * vertexTangent_modelspace);
+    vec3 B = normalize(normalMatrix * vertexBitangent_modelspace);
+    vec3 N = normalize(normalMatrix * vertexNormal_modelspace);
+    
+    // Re-orthogonalize TBN vector so each vector is again perpendicular to the other vectors (Gram-Schmit Process).
+    T = normalize(T - dot(T, N) * N);
+    
+    TBN = transpose(mat3(T, B, N));
+
+    gl_Position = projection * view * model * vec4(vertexPosition_modelspace, 1);
 }

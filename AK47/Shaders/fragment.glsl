@@ -2,43 +2,37 @@
 
 in vec2 texCoord_modelspace;
 in vec3 position_worldspace;
-in vec3 eyeDirection_cameraspace;
-in vec3 lightDirection_cameraspace;
-in vec3 normal_cameraspace;
+in mat3 TBN;
 
-out vec4 color;
+out vec4 fragColor;
 
-uniform sampler2D textureSampler;
+uniform sampler2D diffuseMap;
+uniform sampler2D normalMap;
+uniform vec3 cameraPosition_worldspace;
 uniform vec3 lightPosition_worldspace;
 uniform vec3 lightColor;
 uniform float lightPower;
 
 void main()
 {
-    // Material properties
-    vec3 diffuseColor = texture(textureSampler, texCoord_modelspace).rgb;
-    vec3 ambientColor = vec3(0.3, 0.3, 0.3) * diffuseColor;
-    vec3 specularColor = vec3(0.3, 0.3, 0.3);
+    vec3 normal = texture(normalMap, texCoord_modelspace).rgb * 2.0 - 1.0; // Map [0..1] to [-1,1]
+    vec3 color = texture(diffuseMap, texCoord_modelspace).rgb;
 
-    // Distance to light
-    float distance = length(lightPosition_worldspace - position_worldspace);
+    vec3 lightDirection_worldspace = lightPosition_worldspace - position_worldspace;
+    vec3 lightDirection_tangentspace = normalize(TBN * lightDirection_worldspace);
+    vec3 viewDirection_worldspace = cameraPosition_worldspace - position_worldspace;
+    vec3 viewDirection_tangentspace = normalize(TBN * viewDirection_worldspace);
+    vec3 reflectDirection_tangentspace = reflect(-lightDirection_tangentspace, normal);
+    vec3 halfwayDirection_tangentspace = normalize(lightDirection_tangentspace + viewDirection_tangentspace);
+    
+    // Ambient Color: Simulate indirect light
+    vec3 ambientColor = 0.1 * color;
 
-    vec3 n = normalize(normal_cameraspace);
-    vec3 l = normalize(lightDirection_cameraspace);
-    float cosTheta = clamp(dot(n, l), 0, 1); // 0 = perpendicular or behind triangle, 1 = vertical
+    // Diffuse Color: Color of the object.
+    vec3 diffuseColor = color * max(dot(lightDirection_tangentspace, normal), 0);
 
-    // Eye vector
-    vec3 e = normalize(eyeDirection_cameraspace);
-    vec3 r = reflect(-l, n);
-    float cosAlpha = clamp(dot(e, r), 0, 1); // 1 = looking into reflection, <1 = looking elsewhere
-
-    vec3 colorRGB = 
-        // Ambient: simulates indirect light
-        ambientColor + 
-        // Diffuse: color of the object.
-        diffuseColor * lightColor * lightPower * cosTheta / (distance * distance) +
-        // Specular: reflective highlight
-        specularColor * lightColor * lightPower * pow(cosAlpha, 5) / (distance * distance);
-
-    color = vec4(colorRGB.x, colorRGB.y, colorRGB.z, 1.0);
+    // Specular Color: Reflective highlights.
+    vec3 specularColor = vec3(0.2) * pow(max(dot(normal, halfwayDirection_tangentspace), 0), 32);
+    
+    fragColor = vec4(ambientColor + diffuseColor + specularColor, 1.0);
 }

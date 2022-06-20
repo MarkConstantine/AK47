@@ -50,17 +50,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\fragment.glsl">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\vertex.glsl">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="Models\ak47.obj">
-      <Filter>Resource Files\Models</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -87,20 +76,31 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Textures\AK47_BaseColor.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
     <Image Include="Textures\AK47_Emissive.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\AK47_Metallic.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
-    <Image Include="Textures\AK47_Normal.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
     <Image Include="Textures\AK47_Roughness.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Shaders\fragment.glsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Shaders\vertex.glsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Textures\AK47_BaseColor.png">
+      <Filter>Resource Files\Textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Textures\AK47_Normal.png">
+      <Filter>Resource Files\Textures</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\ak47.obj">
+      <Filter>Resource Files\Models</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

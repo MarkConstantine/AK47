@@ -153,11 +153,8 @@ XCOPY /Y /D "$(ProjectDir)*.obj" $(OutDir)</Command>
       <AdditionalLibraryDirectories>$(SolutionDir)Packages\assimp-5.2.4\lib\Debug;$(SolutionDir)Packages\glfw-3.3.4.bin.WIN64\lib-vc2019;$(SolutionDir)Packages\glew-2.1.0\lib\Release\x64</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY /Y /D "$(SolutionDir)Packages\glew-2.1.0\bin\Release\x64\*.dll" $(OutDir)
-XCOPY /Y /D "$(SolutionDir)Packages\assimp-5.2.4\lib\Debug\*.dll" $(OutDir)
-XCOPY /Y /D "$(ProjectDir)Shaders\*.glsl" $(OutDir)
-XCOPY /Y /D "$(ProjectDir)Models\*.obj" $(OutDir)
-XCOPY /Y /D "$(ProjectDir)Textures\*.png" $(OutDir)</Command>
+      <Command>XCOPY /Y "$(SolutionDir)Packages\glew-2.1.0\bin\Release\x64\*.dll" $(OutDir)
+XCOPY /Y "$(SolutionDir)Packages\assimp-5.2.4\lib\Debug\*.dll" $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -181,11 +178,8 @@ XCOPY /Y /D "$(ProjectDir)Textures\*.png" $(OutDir)</Command>
       <AdditionalLibraryDirectories>$(SolutionDir)Packages\assimp-5.2.4\lib\Release;$(SolutionDir)Packages\glfw-3.3.4.bin.WIN64\lib-vc2019;$(SolutionDir)Packages\glew-2.1.0\lib\Release\x64</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>XCOPY /Y /D "$(SolutionDir)Packages\glew-2.1.0\bin\Release\x64\*.dll" $(OutDir)
-XCOPY /Y /D "$(SolutionDir)Packages\assimp-5.2.4\lib\Release\*.dll" $(OutDir)
-XCOPY /Y /D "$(ProjectDir)Shaders\*.glsl" $(OutDir)
-XCOPY /Y /D "$(ProjectDir)Models\*.obj" $(OutDir)
-XCOPY /Y /D "$(ProjectDir)Textures\*.png" $(OutDir)</Command>
+      <Command>XCOPY /Y "$(SolutionDir)Packages\glew-2.1.0\bin\Release\x64\*.dll" $(OutDir)
+XCOPY /Y "$(SolutionDir)Packages\assimp-5.2.4\lib\Release\*.dll" $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -202,9 +196,27 @@ XCOPY /Y /D "$(ProjectDir)Textures\*.png" $(OutDir)</Command>
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\fragment.glsl" />
-    <None Include="Shaders\vertex.glsl" />
-    <None Include="Models\ak47.obj" />
+    <CopyFileToFolders Include="Shaders\fragment.glsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Shaders\vertex.glsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Models\ak47.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
@@ -217,10 +229,20 @@ XCOPY /Y /D "$(ProjectDir)Textures\*.png" $(OutDir)</Command>
     <ClInclude Include="window.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Textures\AK47_BaseColor.png" />
+    <CopyFileToFolders Include="Textures\AK47_BaseColor.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </CopyFileToFolders>
     <Image Include="Textures\AK47_Emissive.png" />
     <Image Include="Textures\AK47_Metallic.png" />
-    <Image Include="Textures\AK47_Normal.png" />
+    <CopyFileToFolders Include="Textures\AK47_Normal.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </CopyFileToFolders>
     <Image Include="Textures\AK47_Roughness.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
