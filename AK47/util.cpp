@@ -18,18 +18,18 @@ namespace util
         return std::filesystem::path(szFullPath).parent_path();
     }
 
-    std::filesystem::path GetShaderDirectory()
+    std::filesystem::path GetShaderFilePath(const std::string& filename)
     {
-        return GetBaseDirectory();
+        return GetBaseDirectory().append(filename);
     }
 
-    std::filesystem::path GetModelDirectory()
+    std::filesystem::path GetModelFilePath(const std::string& filename)
     {
-        return GetBaseDirectory();
+        return GetBaseDirectory().append(filename);
     }
 
-    std::filesystem::path GetTextureDirectory()
+    std::filesystem::path GetTextureFilePath(const std::string& filename)
     {
-        return GetBaseDirectory();
+        return GetBaseDirectory().append(filename);
     }
 } // util

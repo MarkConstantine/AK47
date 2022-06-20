@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "shader.h"
 #include "mesh.h"
 #include "util.h"
 
@@ -7,17 +8,17 @@
 
 #define VECTOR_SIZE(v) (sizeof(v[0]) * v.size())
 
-Mesh::Mesh(const MeshInfo& info)
+Mesh::Mesh(const MeshLoadInfo& load_info)
 {
     Clear();
 
     glGenVertexArrays(1, &m_VAO);
     glBindVertexArray(m_VAO);
-
-    LoadModel(info.ModelFile);
-    LoadTexture(m_Textures[BASE_COLOR], info.DiffuseTextureFile, "diffuseMap");
-    LoadTexture(m_Textures[NORMAL_MAP], info.NormalMapFile, "normalMap");
-    LoadTexture(m_Textures[SPECULAR_MAP], info.SpecularMapFile, "specularMap");
+    
+    LoadModel(load_info.ModelFile);
+    LoadTexture(m_Textures[BASE_COLOR], load_info.DiffuseTextureFile, "diffuseMap");
+    LoadTexture(m_Textures[NORMAL_MAP], load_info.NormalMapFile, "normalMap");
+    LoadTexture(m_Textures[SPECULAR_MAP], load_info.SpecularMapFile, "specularMap");
 
     glBindVertexArray(0);
 }
@@ -27,7 +28,7 @@ Mesh::~Mesh()
     Clear();
 }
 
-void Mesh::Render(GLuint program_id)
+void Mesh::Render(ShaderProgram& shader_program)
 {
     glBindVertexArray(m_VAO);
 
@@ -36,7 +37,7 @@ void Mesh::Render(GLuint program_id)
         auto& texture = m_Textures[i];
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, texture.TextureUnit);
-        glUniform1i(glGetUniformLocation(program_id, texture.TextureSampler.c_str()), i);
+        shader_program.SetUniform(texture.TextureSampler, i);
     }
 
     for (int i = 0; i < m_Meshes.size(); ++i)
@@ -72,20 +73,12 @@ void Mesh::Clear()
     }
 }
 
-void Mesh::LoadTexture(TextureEntry& texture, const std::string& texture_filename, const std::string& sampler_name)
+void Mesh::LoadTexture(TextureEntry& texture_entry, const std::string& texture_filename, const std::string& sampler_name)
 {
-    glGenTextures(1, &texture.TextureUnit);
-    glBindTexture(GL_TEXTURE_2D, texture.TextureUnit);
-
-    texture.TextureSampler = sampler_name;
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
+    auto start_time = std::chrono::high_resolution_clock::now();
+    
     int width, height, numChannels;
-    std::string absolute_path = util::GetTextureDirectory().append(texture_filename).string();
+    std::string absolute_path = util::GetTextureFilePath(texture_filename).string();
     auto data = stbi_load(absolute_path.c_str(), &width, &height, &numChannels, 0);
     if (data == nullptr)
     {
@@ -102,23 +95,38 @@ void Mesh::LoadTexture(TextureEntry& texture, const std::string& texture_filenam
         case 4: format = GL_RGBA;   break;
     }
 
+    glGenTextures(1, &texture_entry.TextureUnit);
+    glBindTexture(GL_TEXTURE_2D, texture_entry.TextureUnit);
+    
+    texture_entry.TextureSampler = sampler_name;
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     stbi_image_free(data);
+
+    auto stop_time = std::chrono::high_resolution_clock::now();
+    auto load_time = std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time);
+    fprintf(stdout, "Loaded textured %s with %d channel(s) in %lld ms.\n", absolute_path.c_str(), numChannels, load_time.count());
 }
 
 void Mesh::LoadModel(const std::string& model_filename)
 {
+    auto start_time = std::chrono::high_resolution_clock::now();
+    
     const auto ASSIMP_LOAD_FLAGS = (
         aiProcess_Triangulate
         | aiProcess_GenSmoothNormals
         | aiProcess_FlipUVs
         | aiProcess_JoinIdenticalVertices
         | aiProcess_CalcTangentSpace
-        );
+    );
 
-    std::string absolute_path = util::GetModelDirectory().append(model_filename).string();
+    std::string absolute_path = util::GetModelFilePath(model_filename).string();
     const aiScene* pScene = m_Importer.ReadFile(absolute_path, ASSIMP_LOAD_FLAGS);
     if (pScene == nullptr)
     {
@@ -129,6 +137,10 @@ void Mesh::LoadModel(const std::string& model_filename)
     ReserveSpace(pScene);
     InitAllMeshes(pScene);
     PopulateBuffers();
+
+    auto stop_time = std::chrono::high_resolution_clock::now();
+    auto load_time = std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time);
+    fprintf(stdout, "Loaded model %s in %lld ms.\n", absolute_path.c_str(), load_time.count());
 }
 
 void Mesh::ReserveSpace(const aiScene* pScene)
@@ -165,19 +177,19 @@ void Mesh::InitAllMeshes(const aiScene* pScene)
     }
 }
 
-void Mesh::InitSingleMesh(const aiMesh* pAiMesh, const MeshEntry& meshInfo)
+void Mesh::InitSingleMesh(const aiMesh* pAiMesh, const MeshEntry& mesh_entry)
 {
     // Populate the vertex attribute vectors
     assert(pAiMesh->mNumVertices > 0);
     for (uint i = 0; i < pAiMesh->mNumVertices; ++i)
     {
-        const uint idx = meshInfo.BaseVertex + i;
+        const uint idx = mesh_entry.BaseVertex + i;
         m_Positions[idx] = util::ToVec3(pAiMesh->mVertices[i]);
         m_Normals[idx] = util::ToVec3(pAiMesh->mNormals[i]);
-        m_TexCoords[idx] = util::ToVec2(pAiMesh->HasTextureCoords(0)
-            ? pAiMesh->mTextureCoords[0][i] : aiVector3D(0.0f, 0.0f, 0.0f));
         m_Tangents[idx] = util::ToVec3(pAiMesh->mTangents[i]);
         m_Bitangents[idx] = util::ToVec3(pAiMesh->mBitangents[i]);
+        m_TexCoords[idx] = util::ToVec2(pAiMesh->HasTextureCoords(0)
+            ? pAiMesh->mTextureCoords[0][i] : aiVector3D(0.0f, 0.0f, 0.0f));
     }
 
     // Populate the index buffer
@@ -188,7 +200,7 @@ void Mesh::InitSingleMesh(const aiMesh* pAiMesh, const MeshEntry& meshInfo)
         assert(face.mNumIndices > 0);
         for (uint i = 0; i < face.mNumIndices; ++i)
         {
-            const uint idx = meshInfo.BaseIndex + f * face.mNumIndices + i;
+            const uint idx = mesh_entry.BaseIndex + f * face.mNumIndices + i;
             m_Indices[idx] = face.mIndices[i];
         }
     }

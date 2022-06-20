@@ -19,14 +19,12 @@ void Window::Run()
 {
     Init();
     Renderer renderer(m_WindowWidth, m_WindowHeight);
-    Camera camera((float)m_WindowWidth, (float)m_WindowHeight, renderer.GetProgramId());
 
     while (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(m_Window) == 0)
     {
         UpdateFpsCounter();
 
-        camera.Move(m_Window);
-        renderer.Render();
+        renderer.Render(m_Window);
 
         glfwSwapBuffers(m_Window);
         glfwPollEvents();

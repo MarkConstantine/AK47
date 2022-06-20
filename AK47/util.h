@@ -3,9 +3,9 @@
 namespace util
 {
     std::filesystem::path GetBaseDirectory();
-    std::filesystem::path GetShaderDirectory();
-    std::filesystem::path GetModelDirectory();
-    std::filesystem::path GetTextureDirectory();
+    std::filesystem::path GetShaderFilePath(const std::string& filename);
+    std::filesystem::path GetModelFilePath(const std::string& filename);
+    std::filesystem::path GetTextureFilePath(const std::string& filename);
     
     inline glm::vec3 ToVec3(const aiVector3D& vec3)
     {

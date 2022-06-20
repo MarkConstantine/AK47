@@ -7,7 +7,7 @@ Shader::Shader(const std::string& filename, GLint shader_type)
     m_ShaderType = shader_type;
     m_ShaderId = glCreateShader(m_ShaderType);
     
-    std::string absolute_path = util::GetShaderDirectory().append(filename).string();
+    std::string absolute_path = util::GetShaderFilePath(filename).string();
     std::ifstream shader_stream(absolute_path, std::ios::in);
     if (!shader_stream.is_open())
     {
@@ -99,4 +99,27 @@ Shader ShaderProgram::GetVertexShader() const
 Shader ShaderProgram::GetFragmentShader() const
 {
     return m_FragmentShader;
+}
+
+void ShaderProgram::UseProgram() const
+{
+    glUseProgram(m_ProgramId);
+}
+
+void ShaderProgram::SetUniform(const std::string& name, const glm::mat4& value)
+{
+    auto location = glGetUniformLocation(m_ProgramId, name.c_str());
+    glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]);
+}
+
+void ShaderProgram::SetUniform(const std::string& name, const glm::vec3& value)
+{
+    auto location = glGetUniformLocation(m_ProgramId, name.c_str());
+    glUniform3f(location, value.x, value.y, value.z);
+}
+
+void ShaderProgram::SetUniform(const std::string& name, int value)
+{
+    auto location = glGetUniformLocation(m_ProgramId, name.c_str());
+    glUniform1i(location, value);
 }

@@ -1,9 +1,8 @@
 #pragma once
 
-#define INVALID_MATERIAL 0xFFFFFFFF
 using uint = unsigned int;
 
-struct MeshInfo
+struct MeshLoadInfo
 {
     std::string ModelFile;
     std::string DiffuseTextureFile;
@@ -14,19 +13,11 @@ struct MeshInfo
 class Mesh
 {
 public:
-    Mesh(const MeshInfo& info);
+    Mesh(const MeshLoadInfo& load_info);
     ~Mesh();
-    void Render(GLuint program_id);
+    void Render(ShaderProgram& shader_program);
 private:
     struct MeshEntry {
-        MeshEntry()
-        {
-            NumIndices = 0;
-            BaseVertex = 0;
-            BaseIndex = 0;
-            MaterialIndex = INVALID_MATERIAL;
-        }
-
         uint NumIndices;
         uint BaseVertex;
         uint BaseIndex;
@@ -65,11 +56,11 @@ private:
     };
 
     void Clear();
-    void LoadTexture(TextureEntry& texture, const std::string& texture_filename, const std::string& sampler_name);
+    void LoadTexture(TextureEntry& texture_entry, const std::string& texture_filename, const std::string& sampler_name);
     void LoadModel(const std::string& model_filename);
     void ReserveSpace(const aiScene* pScene);
     void InitAllMeshes(const aiScene* pScene);
-    void InitSingleMesh(const aiMesh* pAiMesh, const MeshEntry& meshInfo);
+    void InitSingleMesh(const aiMesh* pAiMesh, const MeshEntry& mesh_entry);
     void PopulateBuffers();
 
     GLuint m_VAO = 0;
